@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Bulletin Board</string>
+
+    <string name="notice_title_hint">제목</string>
+    <string name="notice_content_hint">글 내용</string>
+    <string name="notice_highlight">공지</string>
+
+    <string name="edit_notice">완료</string>
+</resources>
