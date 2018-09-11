@@ -7,6 +7,37 @@
     android:orientation="vertical"
     tools:context=".NoticeActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:id="@+id/notice_first_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="최초작성날짜" />
+
+        <TextView
+            android:id="@+id/notice_modified_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/notice_first_date"
+            android:text="수정날짜" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/notice_first_date"
+            android:text="@string/notice_title_text" />
+
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,11 +57,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:enabled="true"
-            android:text="@string/notice_highlight"
+            android:text="@string/notice_edit_highlight"
             android:textAlignment="center"
             android:textAllCaps="false" />
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="@string/notice_content_text" />
 
     <TextView
         android:id="@+id/notice_content"

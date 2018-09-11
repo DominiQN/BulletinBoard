@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:hint="@string/notice_title_hint"
+            android:hint="@string/notice_edit_title_hint"
             android:inputType="text"
             android:singleLine="true" />
 
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/notice_highlight"
+            android:text="@string/notice_edit_highlight"
             android:textAlignment="center"
             android:textAllCaps="false" />
 
@@ -38,6 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:hint="@string/notice_content_hint"
+        android:hint="@string/notice_edit_content_hint"
         android:inputType="textMultiLine" />
 </LinearLayout>
