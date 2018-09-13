@@ -24,10 +24,10 @@
 
         <CheckBox
             android:id="@+id/notice_edit_highlight"
+            style="?android:attr/starStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/notice_edit_highlight"
             android:textAlignment="center"
             android:textAllCaps="false" />
 

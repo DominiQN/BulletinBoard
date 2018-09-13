@@ -53,6 +53,7 @@
 
         <CheckBox
             android:id="@+id/notice_highlight"
+            style="?android:attr/starStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
