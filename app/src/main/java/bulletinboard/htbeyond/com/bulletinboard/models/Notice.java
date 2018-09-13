@@ -18,68 +18,67 @@ public class Notice {
 
     }
 
+    public boolean isHighlighted() {
+        return mHighlighted;
+    }
 
     public int getNoticeNum() {
         return mNoticeNum;
-    }
-
-    public void setNoticeNum(int noticeNum) {
-        mNoticeNum = noticeNum;
     }
 
     public String getNoticeTitle() {
         return mNoticeTitle;
     }
 
-    public void setNoticeTitle(String noticeTitle) {
-        mNoticeTitle = noticeTitle;
-    }
-
     public String getNoticeContent() {
         return mNoticeContent;
-    }
-
-    public void setNoticeContent(String noticeContent) {
-        mNoticeContent = noticeContent;
     }
 
     public Date getNoticePostDate() {
         return mNoticePostDate;
     }
 
-    public void setNoticePostDate(Date noticePostDate) {
-        mNoticePostDate = noticePostDate;
-    }
-
     public Date getNoticeEditDate() {
         return mNoticeEditDate;
-    }
-
-    public void setNoticeEditDate(Date noticeEditDate) {
-        mNoticeEditDate = noticeEditDate;
     }
 
     public int getNoticeViewNum() {
         return mNoticeViewNum;
     }
 
-    public void setNoticeViewNum(int noticeViewNum) {
-        mNoticeViewNum = noticeViewNum;
-    }
-
     public String getNoticeMemId() {
         return mNoticeMemId;
     }
 
-    public void setNoticeMemId(String noticeMemId) {
+    public Notice setNoticeNum(int noticeNum) {
+        mNoticeNum = noticeNum;
+    }
+
+    public Notice setNoticeTitle(String noticeTitle) {
+        mNoticeTitle = noticeTitle;
+    }
+
+    public Notice setNoticeContent(String noticeContent) {
+        mNoticeContent = noticeContent;
+    }
+
+    public Notice setNoticePostDate(Date noticePostDate) {
+        mNoticePostDate = noticePostDate;
+    }
+
+    public Notice setNoticeEditDate(Date noticeEditDate) {
+        mNoticeEditDate = noticeEditDate;
+    }
+
+    public Notice setNoticeViewNum(int noticeViewNum) {
+        mNoticeViewNum = noticeViewNum;
+    }
+
+    public Notice setNoticeMemId(String noticeMemId) {
         mNoticeMemId = noticeMemId;
     }
 
-    public boolean isHighlighted() {
-        return mHighlighted;
-    }
-
-    public void setHighlighted(boolean highlighted) {
+    public Notice setHighlighted(boolean highlighted) {
         mHighlighted = highlighted;
     }
 }
