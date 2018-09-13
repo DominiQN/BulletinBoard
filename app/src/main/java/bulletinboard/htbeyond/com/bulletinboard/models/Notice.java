@@ -1,16 +1,20 @@
 package bulletinboard.htbeyond.com.bulletinboard.models;
 
+import android.text.format.DateFormat;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Notice {
 
-    private int mNoticeNum;
-    private String mNoticeTitle;
-    private String mNoticeContent;
-    private Date mNoticePostDate;
-    private Date mNoticeEditDate;
-    private int mNoticeViewNum;
-    private String mNoticeMemId;
+    private int mNoticeId;
+    private String mTitle;
+    private String mContent;
+    private Date mFirstDate;
+    private Date mModifiedDate;
+    private int mViews;
+    private String mWriterId;
     private boolean mHighlighted;
 
 
@@ -18,75 +22,112 @@ public class Notice {
 
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Notice)) {
+            return false;
+        }
+        Notice target = (Notice) obj;
+        if (mNoticeId == target.mNoticeId) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean isHighlighted() {
         return mHighlighted;
     }
 
-    public int getNoticeNum() {
-        return mNoticeNum;
+    public int getNoticeId() {
+        return mNoticeId;
     }
 
-    public String getNoticeTitle() {
-        return mNoticeTitle;
+    public String getTitle() {
+        return mTitle;
     }
 
-    public String getNoticeContent() {
-        return mNoticeContent;
+    public String getContent() {
+        return mContent;
     }
 
-    public Date getNoticePostDate() {
-        return mNoticePostDate;
+    public Date getFirstDate() {
+        return mFirstDate;
     }
 
-    public Date getNoticeEditDate() {
-        return mNoticeEditDate;
+    public String getFirstDateToString() {
+        return dateToString(mFirstDate);
     }
 
-    public int getNoticeViewNum() {
-        return mNoticeViewNum;
+    public Date getModifiedDate() {
+        return mModifiedDate;
     }
 
-    public String getNoticeMemId() {
-        return mNoticeMemId;
+    public String getModifiedDateToString() {
+        return dateToString(mModifiedDate);
     }
 
-    public Notice setNoticeNum(int noticeNum) {
-        mNoticeNum = noticeNum;
+    public int getViews() {
+        return mViews;
+    }
+
+    public String getWriterId() {
+        return mWriterId;
+    }
+
+    public Notice setNoticeId(int noticeId) {
+        mNoticeId = noticeId;
         return this;
     }
 
-    public Notice setNoticeTitle(String noticeTitle) {
-        mNoticeTitle = noticeTitle;
+    public Notice setTitle(String title) {
+        mTitle = title;
         return this;
     }
 
-    public Notice setNoticeContent(String noticeContent) {
-        mNoticeContent = noticeContent;
+    public Notice setContent(String content) {
+        mContent = content;
         return this;
     }
 
-    public Notice setNoticePostDate(Date noticePostDate) {
-        mNoticePostDate = noticePostDate;
+    public Notice setFirstDate(Date firstDate) {
+        mFirstDate = firstDate;
         return this;
     }
 
-    public Notice setNoticeEditDate(Date noticeEditDate) {
-        mNoticeEditDate = noticeEditDate;
+    public Notice setModifiedDate(Date modifiedDate) {
+        mModifiedDate = modifiedDate;
         return this;
     }
 
-    public Notice setNoticeViewNum(int noticeViewNum) {
-        mNoticeViewNum = noticeViewNum;
+    public Notice setViews(int views) {
+        mViews = views;
         return this;
     }
 
-    public Notice setNoticeMemId(String noticeMemId) {
-        mNoticeMemId = noticeMemId;
+    public Notice setWriterId(String writerId) {
+        mWriterId = writerId;
         return this;
     }
 
     public Notice setHighlighted(boolean highlighted) {
         mHighlighted = highlighted;
         return this;
+    }
+
+    private String dateToString(Date date) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            String formatString = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMddhhmmss");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(formatString);
+            String dateString = dateFormatter.format(date);
+
+            return dateString;
+        } else {
+            String formatString = "yyyy. MM. dd a hh:mm:ss";
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(formatString);
+            String dateString = dateFormatter.format(date);
+
+            return dateString;
+        }
     }
 }

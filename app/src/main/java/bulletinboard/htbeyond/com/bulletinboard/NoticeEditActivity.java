@@ -56,19 +56,19 @@ public class NoticeEditActivity extends AppCompatActivity {
         mHighlightedCheckBox = (CheckBox) findViewById(R.id.notice_edit_highlight);
 
         // savedIntanceState에 저장된 값이 있으면 해당 값을, 저장된 값이 없으면 Notice의 값을 보여줌
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
             if (noticeNum != CREATE_NOTICE) {
                 Notice notice =
                         NoticeStorage.getInstance(NoticeEditActivity.this).getNotice(noticeNum);
-                mTitleTextView.setText(notice.getNoticeTitle());
-                mContentTextView.setText(notice.getNoticeContent());
+                mTitleTextView.setText(notice.getTitle());
+                mContentTextView.setText(notice.getContent());
                 mHighlightedCheckBox.setChecked(notice.isHighlighted());
             }
         } else {
             mTitleTextView.setText(
-                    savedInstanceState.getString(KEY_TITLE, mNotice.getNoticeTitle()));
+                    savedInstanceState.getString(KEY_TITLE, mNotice.getTitle()));
             mContentTextView.setText(
-                    savedInstanceState.getString(KEY_CONTENT, mNotice.getNoticeTitle()));
+                    savedInstanceState.getString(KEY_CONTENT, mNotice.getTitle()));
             mHighlightedCheckBox.setChecked(
                     savedInstanceState.getBoolean(KEY_HIGHLIGHT, mNotice.isHighlighted()));
         }
@@ -84,7 +84,7 @@ public class NoticeEditActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_item_edit:
+            case R.id.menu_notice_edit_item_edit:
                 sendNotice();
 
                 return true;
@@ -96,14 +96,14 @@ public class NoticeEditActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(KEY_TITLE, mNotice.getNoticeTitle());
-        outState.putString(KEY_CONTENT, mNotice.getNoticeContent());
+        outState.putString(KEY_TITLE, mNotice.getTitle());
+        outState.putString(KEY_CONTENT, mNotice.getContent());
         outState.putBoolean(KEY_HIGHLIGHT, mNotice.isHighlighted());
     }
 
     private void sendNotice() {
-        mNotice.setNoticeTitle(mTitleTextView.getText().toString())
-                .setNoticeContent(mContentTextView.getText().toString())
+        mNotice.setTitle(mTitleTextView.getText().toString())
+                .setContent(mContentTextView.getText().toString())
                 .setHighlighted(mHighlightedCheckBox.isChecked());
         /*
          * TODO: 작성된 Notice를 서버에 보내 저장한 후, 서버에 정상 저장 되면 다시 불러오기, 저장되지 않았을 시 오류 메시지 만들기
