@@ -52,33 +52,41 @@ public class Notice {
 
     public Notice setNoticeNum(int noticeNum) {
         mNoticeNum = noticeNum;
+        return this;
     }
 
     public Notice setNoticeTitle(String noticeTitle) {
         mNoticeTitle = noticeTitle;
+        return this;
     }
 
     public Notice setNoticeContent(String noticeContent) {
         mNoticeContent = noticeContent;
+        return this;
     }
 
     public Notice setNoticePostDate(Date noticePostDate) {
         mNoticePostDate = noticePostDate;
+        return this;
     }
 
     public Notice setNoticeEditDate(Date noticeEditDate) {
         mNoticeEditDate = noticeEditDate;
+        return this;
     }
 
     public Notice setNoticeViewNum(int noticeViewNum) {
         mNoticeViewNum = noticeViewNum;
+        return this;
     }
 
     public Notice setNoticeMemId(String noticeMemId) {
         mNoticeMemId = noticeMemId;
+        return this;
     }
 
     public Notice setHighlighted(boolean highlighted) {
         mHighlighted = highlighted;
+        return this;
     }
 }

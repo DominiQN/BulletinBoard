@@ -11,7 +11,7 @@ public class NoticeStorage {
     private Context mContext;
     // private HTTP가지고 노는 거 변수
 
-    static NoticeStorage getInstance(Context context) {
+    public static NoticeStorage getInstance(Context context) {
         if (sNoticeStorage == null) {
             sNoticeStorage = new NoticeStorage(context);
         }
