@@ -1,4 +1,4 @@
-package bulletinboard.htbeyond.com.bulletinboard.fragment;
+package bulletinboard.htbeyond.com.bulletinboard.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +15,7 @@ import java.util.List;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
-import bulletinboard.htbeyond.com.bulletinboard.recyclerview.NoticeAdapter;
+import bulletinboard.htbeyond.com.bulletinboard.adapters.NoticeAdapter;
 
 public class NoticeListFragment extends Fragment {
 

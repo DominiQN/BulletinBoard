@@ -117,7 +117,7 @@ public class Notice {
 
     private String dateToString(Date date) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            String formatString = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMddhhmmss");
+            String formatString = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMddhhmm");
             SimpleDateFormat dateFormatter = new SimpleDateFormat(formatString);
             String dateString = dateFormatter.format(date);
 

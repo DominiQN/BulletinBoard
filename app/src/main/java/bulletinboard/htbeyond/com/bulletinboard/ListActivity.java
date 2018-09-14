@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import bulletinboard.htbeyond.com.bulletinboard.fragment.NoticeListFragment;
+import bulletinboard.htbeyond.com.bulletinboard.fragments.NoticeListFragment;
 
 public class ListActivity extends AppCompatActivity {
 
