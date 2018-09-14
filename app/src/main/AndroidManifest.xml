@@ -23,6 +23,7 @@
             android:name=".NoticeActivity"
             android:parentActivityName=".ListActivity"/>
         <activity android:name=".ListActivity"></activity>
+        <service android:name=".network.HttpRequest"></service>
     </application>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
