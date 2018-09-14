@@ -17,7 +17,7 @@ import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import bulletinboard.htbeyond.com.bulletinboard.recyclerview.NoticeAdapter;
 
-public class ListFragment extends Fragment {
+public class NoticeListFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private NoticeAdapter mAdapter;
@@ -31,9 +31,10 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notice_list, container, false);
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        updateUI();
 
         return view;
     }
@@ -48,10 +49,11 @@ public class ListFragment extends Fragment {
         List<Notice> notices = NoticeStorage.getInstance(getActivity()).getNotices();
 
         if (mAdapter == null) {
-            mAdapter = new NoticeAdapter(notices, getActivity());
+            mAdapter = new NoticeAdapter(notices);
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.
+            mAdapter.setNotices(notices);
+            mAdapter.notifyDataSetChanged();
         }
     }
 }

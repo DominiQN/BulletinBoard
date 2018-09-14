@@ -16,6 +16,7 @@ public class NoticeStorage {
         if (sNoticeStorage == null) {
             sNoticeStorage = new NoticeStorageTester(context);
         }
+        // mNotices = 서버에서 일정량? 가져오기?
         return sNoticeStorage;
     }
 
@@ -41,6 +42,7 @@ public class NoticeStorage {
         return null;
     }
 
+    // 몇개 없으면 서버에서 적당량 불러오기
     public List<Notice> getNotices() {
         return null;
     }

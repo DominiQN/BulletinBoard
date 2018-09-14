@@ -18,10 +18,10 @@
         </activity>
         <activity
             android:name=".NoticeEditActivity"
-            android:parentActivityName=".NoticeActivity" />
+            android:parentActivityName=".ListActivity" />
         <activity
             android:name=".NoticeActivity"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".ListActivity"/>
         <activity android:name=".ListActivity"></activity>
     </application>
 
