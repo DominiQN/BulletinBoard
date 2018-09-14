@@ -14,7 +14,7 @@ public class Notice {
     private Date mFirstDate;
     private Date mModifiedDate;
     private int mViews;
-    private String mWriterId;
+    private String mWriter;
     private boolean mHighlighted;
 
 
@@ -71,8 +71,8 @@ public class Notice {
         return mViews;
     }
 
-    public String getWriterId() {
-        return mWriterId;
+    public String getWriter() {
+        return mWriter;
     }
 
     public Notice setNoticeId(int noticeId) {
@@ -105,8 +105,8 @@ public class Notice {
         return this;
     }
 
-    public Notice setWriterId(String writerId) {
-        mWriterId = writerId;
+    public Notice setWriter(String writer) {
+        mWriter = writer;
         return this;
     }
 

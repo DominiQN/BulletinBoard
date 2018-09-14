@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
                 .setHighlighted(true)
                 .setNoticeId(93478)
                 .setViews(10)
-                .setWriterId("Jerson")
+                .setWriter("Jerson")
                 .setFirstDate(date)
                 .setModifiedDate(date);
         NoticeStorage.getInstance(this).addNotice(n);
