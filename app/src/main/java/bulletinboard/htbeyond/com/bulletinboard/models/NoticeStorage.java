@@ -26,7 +26,6 @@ public class NoticeStorage {
 
     // 서버에 Notice 추가
     public boolean addNotice(Notice notice) {
-
         return false;
     }
 

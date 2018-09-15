@@ -17,7 +17,7 @@ public class NoticeJSONWrapper {
 
     private static final String TAG = "NoticeJSONWrapper";
 
-    protected final JSONObject mJSONObject;
+    protected JSONObject mJSONObject;
 
     private final String NOTICE_ID = "noticeNum";
     private final String TITLE = "noticeTitle";

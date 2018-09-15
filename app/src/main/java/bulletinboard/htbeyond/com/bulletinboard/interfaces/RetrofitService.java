@@ -1,49 +1,47 @@
 package bulletinboard.htbeyond.com.bulletinboard.interfaces;
 
-import java.util.ArrayList;
+import com.google.gson.JsonObject;
 
+import bulletinboard.htbeyond.com.bulletinboard.models.PostReqBody;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
 import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 
-public interface BulletinApiinterface {
+public interface RetrofitService {
     @Headers({"Accept: application/json"})
-    @GET("bdms/noticeBoard/searchPost")
-    Call<ArrayList<NoticeRepo>> searchNotice(
-            @Field("pageSize") int pageSize
-            , @Field("pageNum") int pageNum
-            , @Field("searchMode") int searchMode);
+    @GET("bdms/noticeBoard/searchNoticePost")
+    Call<JsonObject> searchNotice(
+            @Query("access_token") String access_token
+            , @Query("pageSize") int pageSize
+            , @Query("pageNum") int pageNum
+            , @Query("searchMode") int searchMode);
 
 
     @Headers({"Accept: application/json"})
-    @GET("bdms/noticeBoard/searchPost")
+    @GET("bdms/noticeBoard/getNoticePost")
     Call<NoticeRepo> getNotice(
-            @Field("noticeNum") int noticeNum);
+            @Query("access_token") String access_token
+            , @Query("noticeNum") int noticeNum);
 
 
-    @POST("bdms/noticeBoard/searchPost")
+    @POST("bdms/noticeBoard/postNoticePost")
     Call<NoticeRepo> postNotice(
-            @Field("noticeTitle") String noticeTitle
-            , @Field("noticeContent") String noticeContent);
+            @Query("access_token") String access_token
+            , @Body PostReqBody postReqBody);
 
-    @POST("bdms/noticeBoard/searchPost")
+    @POST("bdms/noticeBoard/patchNoticePost")
     Call<NoticeRepo> patchNotice(
-            @Field("noticeNum") int noticeNum
-            , @Field("noticeTitle") String noticeTitle
-            , @Field("noticeContent") String noticeContent);
+            @Query("access_token") String access_token
+            , @Body PostReqBody postReqBody);
 
-    @DELETE("bdms/noticeBoard/deletePost")
+    @DELETE("bdms/noticeBoard/deleteNoticePost")
     Call<NoticeRepo> deleteNotice(
-            @Field("noticeNum") int noticeNum);
+            @Query("access_token") String access_token
+            , @Query("noticeNum") int noticeNum);
 
-    public static final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://192.168.1.122:8444/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
 }
