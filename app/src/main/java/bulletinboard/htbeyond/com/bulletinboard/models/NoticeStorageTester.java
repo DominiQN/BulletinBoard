@@ -2,10 +2,10 @@ package bulletinboard.htbeyond.com.bulletinboard.models;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class NoticeStorage {
-    //TODO: 서버랑 연결되고 난 후 NoticeStorageTester를 NoticeStorage로 바꿔줘야 한다.
+public class NoticeStorageTester {
     private static NoticeStorageTester sNoticeStorage;
 
     private List<Notice> mNotices;
@@ -16,36 +16,45 @@ public class NoticeStorage {
         if (sNoticeStorage == null) {
             sNoticeStorage = new NoticeStorageTester(context);
         }
-        // mNotices = 서버에서 일정량? 가져오기?
         return sNoticeStorage;
     }
 
-    private NoticeStorage(Context context) {
+    NoticeStorageTester(Context context) {
+        mNotices = new ArrayList<>();
         mContext = context.getApplicationContext();
     }
 
     // 서버에 Notice 추가
     public boolean addNotice(Notice notice) {
-
+        mNotices.add(notice);
         return false;
     }
 
     public boolean updateNotice(Notice notice) {
-        return false;
+        int index = mNotices.indexOf(notice);
+        if (index == -1) {
+            return false;
+        }
+
+        mNotices.set(index, notice);
+        return true;
     }
 
     public boolean deleteNotice(Notice notice) {
-        return false;
+        return mNotices.remove(notice);
     }
 
     public Notice getNotice(int noticeNum) {
+        for (int i = 0; i < mNotices.size(); i++) {
+            if (mNotices.get(i).getNoticeId() == noticeNum) {
+                return mNotices.get(i);
+            }
+        }
         return null;
     }
 
-    // 몇개 없으면 서버에서 적당량 불러오기
     public List<Notice> getNotices() {
-        return null;
+        return mNotices;
     }
-
 
 }

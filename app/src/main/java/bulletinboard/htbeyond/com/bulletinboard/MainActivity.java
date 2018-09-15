@@ -1,66 +1,53 @@
 package bulletinboard.htbeyond.com.bulletinboard;
 
-import android.annotation.SuppressLint;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.TextView;
 
-import bulletinboard.htbeyond.com.bulletinboard.network.HttpRequest;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Random;
+
+import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
+import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
+import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorageTester;
+
+//TODO: 없애기
 
 public class MainActivity extends AppCompatActivity {
+
+    Random rnd = new Random();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(this, HttpRequest.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        testMethod();
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0: {
-                    TextView tv = (TextView) findViewById(R.id.textView);
-                    tv.setText(msg.obj.toString());
-                }
-                break;
-            }
-        }
-    };
+    private void testMethod() {
+        Notice n = new Notice();
+        Date date  = Calendar.getInstance().getTime();
+        NoticeStorageTester storage = NoticeStorage.getInstance(this);
+        for (int i = 0; i < 100; i++)
+            storage.addNotice(setRandomNotice());
 
-    private HttpRequest mHttpRequest;
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            mHttpRequest = ((HttpRequest.MyBinder) iBinder).getService();
-        }
+        Intent i = ListActivity.newIntent(MainActivity.this);
+        startActivity(i);
+    }
 
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mHttpRequest = null;
-        }
-    };
-
-
-//    public void onButton2Clicked(View v) {
-//
-//        new Thread() {
-//            public void run(){
-//                String result = mHttpRequest.searchRequest("good");
-//                Message msg = Message.obtain(handler, 0, result);
-//                handler.sendMessage(msg);
-//                }
-//        }.start();
-//    }
+    private Notice setRandomNotice() {
+        Notice n = new Notice();
+        Date date  = Calendar.getInstance().getTime();
+        n.setTitle("임의제목")
+                .setContent("아무런\n내용")
+                .setHighlighted(true)
+                .setNoticeId(rnd.nextInt(10000))
+                .setViews(rnd.nextInt(1000))
+                .setWriter("Jerson")
+                .setFirstDate(date)
+                .setModifiedDate(date);
+        return n;
+    }
 }
