@@ -1,5 +1,6 @@
 package bulletinboard.htbeyond.com.bulletinboard.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,6 +19,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import bulletinboard.htbeyond.com.bulletinboard.NoticeActivity;
+import bulletinboard.htbeyond.com.bulletinboard.NoticeEditActivity;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
@@ -45,6 +51,7 @@ public class NoticeListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -131,6 +138,25 @@ public class NoticeListFragment extends Fragment {
         super.onStart();
         mIsLast = false;
         mCurrentPageNumber = 0;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_notice_list_item_post:
+                Intent i = NoticeEditActivity.newIntent(getActivity(), NoticeEditActivity.CREATE_NOTICE);
+                startActivity(i);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_notice_list, menu);
     }
 
     private void updateUI() {
