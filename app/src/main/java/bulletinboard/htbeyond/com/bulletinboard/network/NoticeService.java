@@ -2,13 +2,15 @@ package bulletinboard.htbeyond.com.bulletinboard.network;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
+import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -16,12 +18,12 @@ import retrofit2.Response;
 public class NoticeService {
 
     private static final String TAG = "NoticeService";
-    private static final int NORMAL_SIZE = 10;
-    private static final int MODE_FIND_ALL = 0;
-    private static final int MODE_FIND_BY_TITLE = 1;
-    private static final int MODE_FIND_BY_CONTENT = 2;
-    private static final int MODE_FIND_BY_WRITER = 3;
-    private static final int MODE_FIND_BY_HIGHLIGHT = 4;
+    public static final int NORMAL_SIZE = 10;
+    public static final int MODE_FIND_ALL = 0;
+    public static final int MODE_FIND_BY_TITLE = 1;
+    public static final int MODE_FIND_BY_CONTENT = 2;
+    public static final int MODE_FIND_BY_WRITER = 3;
+    public static final int MODE_FIND_BY_HIGHLIGHT = 4;
 
     private Context mContext;
 
@@ -30,10 +32,10 @@ public class NoticeService {
     }
 
 
-    public void deleteNotice() {
+    public void deleteNotice(int noticeId) {
 
-        final Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
-                .deleteNotice("access_token", 250);
+        final Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
+                .deleteNotice("access_token", noticeId);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -56,7 +58,7 @@ public class NoticeService {
 
     public void getNotice() {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+        Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
                 .getNotice("access_token", 250);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
@@ -80,7 +82,7 @@ public class NoticeService {
 
     public void postNotice(Notice notice) {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+        Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
                 .postNotice("access_token", notice.getPostBody(Notice.POST));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
@@ -102,20 +104,27 @@ public class NoticeService {
         });
     }
 
-    public void getNotices(int pageSize, int pageNum) {
+    public void getNotices(int pageSize, int pageNum, final boolean isRefresh) {
 
-        Call<JsonObject> res = APIClient.getInstance(mContext).getService()
+        Call<JSONObject> res = RetrofitService.getInstance(mContext).getService()
                 .getNotices(mContext.getString(R.string.access_token) , pageSize, pageNum, MODE_FIND_ALL);
-        res.enqueue(new Callback<JsonObject>() {
+        res.enqueue(new Callback<JSONObject>() {
             @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 Log.d(TAG, "getNotices() called" + response.toString());
                 if (response.isSuccessful()) {
+                    NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
+                    NoticeStorage storage = NoticeStorage.getInstance(mContext);
+                    if (isRefresh) {
+                        storage.setNotices(jsonWrapper.getNotices());
+                    } else {
+                        storage.appendNotices(jsonWrapper.getNotices());
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
+            public void onFailure(Call<JSONObject> call, Throwable t) {
                 Log.e(TAG, "getNotices() called" + t.getMessage());
                 showFailToast();
             }
@@ -124,7 +133,7 @@ public class NoticeService {
 
     public void updateNotice(Notice notice) {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+        Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
                 .updateNotice("access_token", notice.getPostBody(Notice.UPDATE));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override

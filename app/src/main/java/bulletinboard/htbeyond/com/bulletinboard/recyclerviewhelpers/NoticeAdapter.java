@@ -1,4 +1,4 @@
-package bulletinboard.htbeyond.com.bulletinboard.adapters;
+package bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers;
 
 import android.content.Intent;
 import android.graphics.Typeface;

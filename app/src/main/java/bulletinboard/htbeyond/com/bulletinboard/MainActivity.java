@@ -16,7 +16,7 @@ import java.util.Random;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorageTester;
-import bulletinboard.htbeyond.com.bulletinboard.network.APIClient;
+import bulletinboard.htbeyond.com.bulletinboard.network.RetrofitService;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchNotice() {
 
-        Call<JsonObject> res = APIClient.getInstance().getService().getNotices(getString(R.string.access_token) , 10, 0,0);
+        Call<JsonObject> res = RetrofitService.getInstance().getService().getNotices(getString(R.string.access_token) , 10, 0,0);
         res.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void getNotice(View view) {
 
-        Call<NoticeRepo> res = APIClient.getInstance().getService().getNotice(getString(R.string.access_token), 250);
+        Call<NoticeRepo> res = RetrofitService.getInstance().getService().getNotice(getString(R.string.access_token), 250);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     public void postNotice(View view) {
 
         // TODO: TOAST 띄워주기
-        Call<NoticeRepo> res = APIClient.getInstance().getService().postNotice(getString(R.string.access_token),new PostReqBody("0916title", "0916content"));
+        Call<NoticeRepo> res = RetrofitService.getInstance().getService().postNotice(getString(R.string.access_token),new PostReqBody("0916title", "0916content"));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void patchNotice(View view) {
 
-        Call<NoticeRepo> res = APIClient.getInstance().getService().updateNotice(getString(R.string.access_token), new PostReqBody(250, "0916patchTItle", "0916patchContent"));
+        Call<NoticeRepo> res = RetrofitService.getInstance().getService().updateNotice(getString(R.string.access_token), new PostReqBody(250, "0916patchTItle", "0916patchContent"));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void deleteNotice(View view) {
 
-        Call<NoticeRepo> res = APIClient.getInstance().getService().deleteNotice(getString(R.string.access_token), 250);
+        Call<NoticeRepo> res = RetrofitService.getInstance().getService().deleteNotice(getString(R.string.access_token), 250);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {

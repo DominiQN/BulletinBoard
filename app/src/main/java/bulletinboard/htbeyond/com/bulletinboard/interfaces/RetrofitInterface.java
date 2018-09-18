@@ -2,6 +2,8 @@ package bulletinboard.htbeyond.com.bulletinboard.interfaces;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
+
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
 import retrofit2.Call;
@@ -15,7 +17,7 @@ import retrofit2.http.Query;
 public interface RetrofitInterface {
     @Headers({"Accept: application/json"})
     @GET("bdms/noticeBoard/searchNoticePost")
-    Call<JsonObject> getNotices(
+    Call<JSONObject> getNotices(
             @Query("access_token") String access_token
             , @Query("pageSize") int pageSize
             , @Query("pageNum") int pageNum

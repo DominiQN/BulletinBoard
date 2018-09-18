@@ -17,30 +17,30 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class APIClient {
+public class RetrofitService {
 
-    private static APIClient sAPIClient;
+    private static RetrofitService sRetrofitService;
     private static Retrofit mRetrofit;
-    private static RetrofitInterface mRetrofitService;
+    private static RetrofitInterface mRetrofitInterface;
     private Context mContext;
 
-    private APIClient(Context context) {
+    private RetrofitService(Context context) {
         mContext = context.getApplicationContext();
     }
 
 
-    public static APIClient getInstance(Context context) {
-        if (sAPIClient == null) {
-            sAPIClient = new APIClient(context);
+    public static RetrofitService getInstance(Context context) {
+        if (sRetrofitService == null) {
+            sRetrofitService = new RetrofitService(context);
             mRetrofit = new Retrofit.Builder()
                     .baseUrl(context.getString(R.string.base_uri))
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(getUnsafeOkHttpClient().build())
                     .build();
-            mRetrofitService = mRetrofit.create(RetrofitInterface.class);
+            mRetrofitInterface = mRetrofit.create(RetrofitInterface.class);
         }
 
-        return sAPIClient;
+        return sRetrofitService;
     }
 
     public static OkHttpClient.Builder getUnsafeOkHttpClient() {
@@ -82,7 +82,7 @@ public class APIClient {
     }
 
     public RetrofitInterface getService() {
-        return mRetrofitService;
+        return mRetrofitInterface;
     }
 
 }

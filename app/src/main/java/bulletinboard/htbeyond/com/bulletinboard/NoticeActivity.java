@@ -28,9 +28,9 @@ public class NoticeActivity extends AppCompatActivity {
     private TextView mModifiedDate;
 
 
-    public static Intent newIntent(Context packageContext, int noticeNum) {
+    public static Intent newIntent(Context packageContext, int noticeId) {
         Intent i = new Intent(packageContext, NoticeActivity.class);
-        i.putExtra(EXTRA_NOTICE_NUM, noticeNum);
+        i.putExtra(EXTRA_NOTICE_NUM, noticeId);
 
         return i;
     }
