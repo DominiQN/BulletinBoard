@@ -21,6 +21,16 @@ public class NoticeListJSONWrapper {
 
     protected JSONObject mJSONObject;
     protected List<Notice> mNotices;
+    protected boolean mFirst;
+    protected boolean mLast;
+
+    private final String PAGE = "content";
+    private final String TOTAL_ELEMENTS = "totalElements";
+    private final String TOTAL_PAGES = "totalPages";
+    private final String FIRST = "first";
+    private final String LAST = "last";
+    private final String PAGE_NUMBER = "number";
+    private final String SIZE_OF_PAGE = "size";
 
     private final String NOTICE_ID = "noticeNum";
     private final String TITLE = "noticeTitle";
@@ -30,6 +40,7 @@ public class NoticeListJSONWrapper {
     private final String VIEWS = "noticeViewNum";
     private final String WRITER = "noticeMemId";
     private final String HIGHLIGHTED = "highlight";
+
     private final String YEAR = "year";
     private final String MONTH = "month";
     private final String DAY_OF_MONTH = "monthValue";
@@ -42,7 +53,11 @@ public class NoticeListJSONWrapper {
     }
 
     public List<Notice> getNotices() {
+        if (mNotices != null) {
+            return mNotices;
+        }
         mNotices = new ArrayList<Notice>();
+        mJSONObject.getJSONArray(PAGE);
 
     }
 
