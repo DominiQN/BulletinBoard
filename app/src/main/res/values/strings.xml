@@ -5,6 +5,7 @@
     <string name="notice_edit_content_hint">글 내용</string>
     <string name="notice_edit_highlight">공지</string>
     <string name="notice_edit_edit">수정</string>
+    <string name="notice_edit_delete">삭제</string>
     <string name="notice_highlight_on">하이라이팅</string>
     <string name="notice_highlight_off">하이라이팅 취소</string>
 
@@ -20,4 +21,5 @@
     <string name="toast_update_success">수정하였습니다.</string>
     <string name="toast_failure">failure</string>
 
+    <string name="notice_list_post">게시글 작성</string>
 </resources>

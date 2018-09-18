@@ -66,6 +66,7 @@ public class NoticeService {
                 Log.d(TAG, "getNoticePage() called" + response.toString());
                 if (response.isSuccessful()) {
 
+
                 } else {
                     showFailToast();
                 }
@@ -133,25 +134,7 @@ public class NoticeService {
 
     public void updateNotice(Notice notice) {
 
-        Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
-                .updateNotice("access_token", notice.getPostBody(Notice.UPDATE));
-        res.enqueue(new Callback<NoticeRepo>() {
-            @Override
-            public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
-                Log.d(TAG, "updateNotice() called" + response.toString());
-                if (response.isSuccessful()) {
-                    Toast.makeText(mContext, R.string.toast_update_success, Toast.LENGTH_SHORT).show();
-                } else {
-                    showFailToast();
-                }
-            }
 
-            @Override
-            public void onFailure(Call<NoticeRepo> call, Throwable t) {
-                Log.e(TAG, "updateNotice() called" + t.getMessage());
-                showFailToast();
-            }
-        });
     }
 
     private void showFailToast() {

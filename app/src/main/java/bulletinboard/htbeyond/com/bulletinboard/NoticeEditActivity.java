@@ -4,14 +4,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
+import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
+import bulletinboard.htbeyond.com.bulletinboard.network.RetrofitService;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class NoticeEditActivity extends AppCompatActivity {
 
@@ -20,12 +27,16 @@ public class NoticeEditActivity extends AppCompatActivity {
     private static final String KEY_TITLE = "title";
     private static final String KEY_CONTENT = "content";
     private static final String KEY_HIGHLIGHT = "highlight";
-    private static final int CREATE_NOTICE = -1;
+    public static final int CREATE_NOTICE = -1;
+
+    private static final String TAG = "NoticeEditActivity";
 
     private Notice mNotice;
     private TextView mTitleTextView;
     private TextView mContentTextView;
     private CheckBox mHighlightedCheckBox;
+    private boolean mCreating;
+
 
     /**
      *
@@ -48,21 +59,28 @@ public class NoticeEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_edit);
 
-        mNotice = new Notice();
         int noticeNum = getIntent().getIntExtra(EXTRA_NOTICE_NUM, CREATE_NOTICE);
+        if (noticeNum == CREATE_NOTICE) {
+            mCreating = true;
+        }
 
         mTitleTextView = (TextView) findViewById(R.id.notice_edit_title);
         mContentTextView = (TextView) findViewById(R.id.notice_edit_content);
         mHighlightedCheckBox = (CheckBox) findViewById(R.id.notice_edit_highlight);
 
         // savedIntanceState에 저장된 값이 있으면 해당 값을, 저장된 값이 없으면 Notice의 값을 보여줌
+
+
         if (savedInstanceState == null) {
             if (noticeNum != CREATE_NOTICE) {
                 Notice notice =
                         NoticeStorage.getInstance(NoticeEditActivity.this).getNotice(noticeNum);
+                mNotice = notice;
                 mTitleTextView.setText(notice.getTitle());
                 mContentTextView.setText(notice.getContent());
                 mHighlightedCheckBox.setChecked(notice.isHighlighted());
+            } else {
+                mNotice = new Notice();
             }
         } else {
             mTitleTextView.setText(
@@ -88,6 +106,10 @@ public class NoticeEditActivity extends AppCompatActivity {
                 sendNotice();
 
                 return true;
+            case R.id.menu_notice_edit_item_delete:
+                deleteNotice();
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -101,14 +123,75 @@ public class NoticeEditActivity extends AppCompatActivity {
         outState.putBoolean(KEY_HIGHLIGHT, mNotice.isHighlighted());
     }
 
+
+    //context 찾아 넣기
     private void sendNotice() {
+
+        Call<NoticeRepo> res = null;
+
         mNotice.setTitle(mTitleTextView.getText().toString())
                 .setContent(mContentTextView.getText().toString())
                 .setHighlighted(mHighlightedCheckBox.isChecked());
+
+        if (mCreating) {
+            res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
+                    .postNotice("access_token", mNotice.getPostBody(Notice.POST));
+        } else {
+            res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
+                    .postNotice("access_token", mNotice.getPostBody(Notice.UPDATE));
+        }
+            res.enqueue(new Callback<NoticeRepo>() {
+                @Override
+                public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
+                    Log.d(TAG, "postNotice() called" + response.toString());
+                    if (response.isSuccessful()) {
+                        Toast.makeText(NoticeEditActivity.this, R.string.toast_post_success, Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        showFailToast();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<NoticeRepo> call, Throwable t) {
+                    Log.e(TAG, "postNotice() called" + t.getMessage());
+                    showFailToast();
+                }
+            });
+    }
+
+    //context 찾아 넣기
+    private void deleteNotice(){
+        mNotice.setNoticeId(getIntent().getIntExtra(EXTRA_NOTICE_NUM, CREATE_NOTICE));
+
+        Call<NoticeRepo> res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
+                .deleteNotice("access_token", mNotice.getNoticeId());
+        res.enqueue(new Callback<NoticeRepo>() {
+            @Override
+            public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
+                Log.d(TAG, "deleteNotice() called" + response.toString());
+                if (response.isSuccessful()) {
+                    Toast.makeText(NoticeEditActivity.this, R.string.toast_delete_success, Toast.LENGTH_SHORT).show();
+
+                } else {
+                    showFailToast();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<NoticeRepo> call, Throwable t) {
+                Log.e(TAG, "deleteNotice() called" + t.getMessage());
+                showFailToast();
+            }
+        });
+
+    }
         /*
          * TODO: 작성된 Notice를 서버에 보내 저장한 후, 서버에 정상 저장 되면 다시 불러오기, 저장되지 않았을 시 오류 메시지 만들기
          *
          *
          */
-    }
+        private void showFailToast() {
+            Toast.makeText(NoticeEditActivity.this, R.string.toast_failure, Toast.LENGTH_SHORT).show();
+        }
 }
