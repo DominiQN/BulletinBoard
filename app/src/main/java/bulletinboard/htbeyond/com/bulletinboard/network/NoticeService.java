@@ -18,7 +18,7 @@ import retrofit2.Response;
 public class NoticeService {
 
     private static final String TAG = "NoticeService";
-    public static final int NORMAL_SIZE = 10;
+    public static final int NORMAL_SIZE = 30;
     public static final int MODE_FIND_ALL = 0;
     public static final int MODE_FIND_BY_TITLE = 1;
     public static final int MODE_FIND_BY_CONTENT = 2;

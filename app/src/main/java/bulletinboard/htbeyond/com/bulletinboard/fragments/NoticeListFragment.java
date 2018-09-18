@@ -18,6 +18,7 @@ import java.util.List;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
+import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.EndlessNoticeAdapter;
 import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.EndlessRecyclerOnScrollListener;
 import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.NoticeAdapter;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeListJSONWrapper;
@@ -33,12 +34,12 @@ public class NoticeListFragment extends Fragment {
     private static final String KEY_PAGE_NUM
             = "bulletinboard.htbeyond.com.bulletinboard.fragments.page_num";
     private static final String KEY_LAST
-            = "bulletinboard.htbeyond.com.bulletinboard.fragments.last"
+            = "bulletinboard.htbeyond.com.bulletinboard.fragments.last";
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;\
     private EndlessRecyclerOnScrollListener mEndlessRecyclerOnScrollListener;
-    private NoticeAdapter mAdapter;
+    private EndlessNoticeAdapter mAdapter;
     private int mCurrentPageNumber;
     private boolean mIsLast;
 
@@ -61,61 +62,48 @@ public class NoticeListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
 
-        mEndlessRecyclerOnScrollListener =
-                new EndlessRecyclerOnScrollListener() {
-                    @Override
-                    public void onLoadMore(int current_page) {
-                        load
-                    }
-                }
-
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerOnScrollListener(mLinearLayoutManager) {
             @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onLoadMore(int current_page) {
+                    mAdapter = (EndlessNoticeAdapter) mRecyclerView.getAdapter();
+                    if (mAdapter != null) {
+                        mAdapter.setIsAppending(true);
+                        mAdapter.notifyItemInserted(mAdapter.getItemCount());
 
-                int visibleItemCount = recyclerView.getChildCount();
-                int totalItemCount = mLinearLayoutManager.getItemCount();
-                int firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
 
-                if (mLoading) {
-                    int diffCurrentFromPrevious = totalItemCount - previousItemCount;
+                        Call<JSONObject> res = RetrofitService.getInstance(getActivity()).getService()
+                                .getNotices(getString(R.string.access_token) , NoticeService.NORMAL_SIZE, current_page, NoticeService.MODE_FIND_ALL);
+                        res.enqueue(new Callback<JSONObject>() {
+                            @Override
+                            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                                Log.d(TAG, "getNotices() called" + response.toString());
+                                if (response.isSuccessful()) {
+                                    NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
+                                    NoticeStorage storage = NoticeStorage.getInstance(getActivity());
+                                    if (jsonWrapper.isLast()) {
+                                        mIsLast = true;
+                                        return;
+                                    }
+                                    mAdapter.addAll(jsonWrapper.getNotices());
+                                }
 
-                    // check if current total is greater than previous (diff should be greater than 1, for considering placeholder)
-                    // and if current total is equal to the total in server
-                    if ((diffCurrentFromPrevious > 1) ||
-                            totalItemCount >= mTotalEntries) {
-                        mLoading = false;
-                        previousItemCount = totalItemCount;
+                            }
+
+                            @Override
+                            public void onFailure(Call<JSONObject> call, Throwable t) {
+
+                            }
+                        });
                     }
-                } else {
-
-                    if (totalItemCount >= mTotalEntries) {
-                        // do nothing, we've reached the end of the list
-                    } else {
-                        // check if the we've reached the end of the list,
-                        // and if the total items is less than the total items in the server
-                        if ((firstVisibleItem + visibleItemCount) >= totalItemCount &&
-                                totalItemCount < mTotalEntries) {
-                            onLoadMore(++current_page);
-
-                            mLoading = true;
-                            previousItemCount = totalItemCount;
-                        }
-                    }
-                }
-
             }
         });
 
         if (savedInstanceState != null) {
-            mCurrentPageNumber = savedInstanceState.getInt(KEY_PAGE_NUM);
             mIsLast = savedInstanceState.getBoolean(KEY_LAST);
         }
-        mCurrentPageNumber = 0;
 
-        getNotices(30, 0, true);
+        mCurrentPageNumber = 0;
 
         return view;
     }
@@ -145,7 +133,7 @@ public class NoticeListFragment extends Fragment {
         }
     }
 
-    public void getNotices(int pageSize, int pageNum, final boolean isRefresh) {
+    public void getNotices(int pageSize, int pageNum) {
 
         Call<JSONObject> res = RetrofitService.getInstance(getActivity()).getService()
                 .getNotices(getString(R.string.access_token) , pageSize, pageNum, NoticeService.MODE_FIND_ALL);
@@ -164,17 +152,17 @@ public class NoticeListFragment extends Fragment {
                             return;
                         }
                         mCurrentPageNumber++;
+                        mA
                         storage.appendNotices(jsonWrapper.getNotices());
                     }
-
-                    updateUI();
+//
+//                    updateUI();
                 }
             }
 
             @Override
             public void onFailure(Call<JSONObject> call, Throwable t) {
                 Log.e(TAG, "getNotices() called" + t.getMessage());
-                showFailToast();
             }
         });
     }
