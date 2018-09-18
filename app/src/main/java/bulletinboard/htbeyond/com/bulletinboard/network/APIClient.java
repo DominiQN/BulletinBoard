@@ -1,5 +1,7 @@
 package bulletinboard.htbeyond.com.bulletinboard.network;
 
+import android.content.Context;
+
 import java.security.cert.CertificateException;
 
 import javax.net.ssl.HostnameVerifier;
@@ -9,29 +11,36 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import bulletinboard.htbeyond.com.bulletinboard.interfaces.RetrofitService;
+import bulletinboard.htbeyond.com.bulletinboard.R;
+import bulletinboard.htbeyond.com.bulletinboard.interfaces.RetrofitInterface;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class NetRetrofit {
-    private static NetRetrofit ourInstance = new NetRetrofit();
-    public static NetRetrofit getInstance() {
-        return ourInstance;
+public class APIClient {
+
+    private static APIClient sAPIClient;
+    private static Retrofit mRetrofit;
+    private static RetrofitInterface mRetrofitService;
+    private Context mContext;
+
+    private APIClient(Context context) {
+        mContext = context.getApplicationContext();
     }
-    private NetRetrofit() {
-    }
 
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("https://192.168.1.122:8444/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(getUnsafeOkHttpClient().build())
-            .build();
 
-    RetrofitService service = retrofit.create(RetrofitService.class);
+    public static APIClient getInstance(Context context) {
+        if (sAPIClient == null) {
+            sAPIClient = new APIClient(context);
+            mRetrofit = new Retrofit.Builder()
+                    .baseUrl(context.getString(R.string.base_uri))
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .client(getUnsafeOkHttpClient().build())
+                    .build();
+            mRetrofitService = mRetrofit.create(RetrofitInterface.class);
+        }
 
-    public RetrofitService getService() {
-        return service;
+        return sAPIClient;
     }
 
     public static OkHttpClient.Builder getUnsafeOkHttpClient() {
@@ -71,4 +80,9 @@ public class NetRetrofit {
             throw new RuntimeException(e);
         }
     }
+
+    public RetrofitInterface getService() {
+        return mRetrofitService;
+    }
+
 }

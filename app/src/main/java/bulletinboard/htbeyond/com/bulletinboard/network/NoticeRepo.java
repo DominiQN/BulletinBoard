@@ -3,6 +3,17 @@ package bulletinboard.htbeyond.com.bulletinboard.network;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
+
+
+public class NoticeRepo {
+
 class Chronology {
 
     @SerializedName("id")
@@ -102,6 +113,11 @@ class NoticeEditDate {
         return chronology;
     }
 
+    public Date getDate() {
+        Date date = new GregorianCalendar(year, monthValue, dayOfMonth, hour, minute)
+                .getTime();
+        return date;
+    }
 }
 
 class NoticePostDate {
@@ -184,9 +200,13 @@ class NoticePostDate {
         return chronology;
     }
 
-}
+    public Date getDate() {
+        Date date = new GregorianCalendar(year, monthValue, dayOfMonth, hour, minute)
+                .getTime();
 
-public class NoticeRepo {
+        return date;
+    }
+}
 
     @SerializedName("noticeNum")
     @Expose
@@ -205,13 +225,13 @@ public class NoticeRepo {
     private NoticeEditDate noticeEditDate;
     @SerializedName("noticeViewNum")
     @Expose
-    private Object noticeViewNum;
+    private Integer noticeViewNum;
     @SerializedName("noticeMemId")
     @Expose
-    private Object noticeMemId;
+    private String noticeMemId;
     @SerializedName("noticeAttachedFile")
     @Expose
-    private Object noticeAttachedFile;
+    private String noticeAttachedFile;
     @SerializedName("highlight")
     @Expose
     private Boolean highlight;
@@ -236,15 +256,15 @@ public class NoticeRepo {
         return noticeEditDate;
     }
 
-    public Object getNoticeViewNum() {
+    public Integer getNoticeViewNum() {
         return noticeViewNum;
     }
 
-    public Object getNoticeMemId() {
+    public String getNoticeMemId() {
         return noticeMemId;
     }
 
-    public Object getNoticeAttachedFile() {
+    public String getNoticeAttachedFile() {
         return noticeAttachedFile;
     }
 
@@ -266,4 +286,20 @@ public class NoticeRepo {
                 ", highlight=" + highlight +
                 '}';
     }
+
+    public Notice getNotice() {
+        Notice notice = new Notice();
+
+        notice.setNoticeId(noticeNum)
+                .setTitle(noticeTitle)
+                .setContent(noticeContent)
+                .setFirstDate(noticePostDate.getDate())
+                .setModifiedDate(noticeEditDate.getDate())
+                .setViews(noticeViewNum)
+                .setWriter(noticeMemId)
+                .setHighlighted(highlight);
+
+        return notice;
+    }
+
 }

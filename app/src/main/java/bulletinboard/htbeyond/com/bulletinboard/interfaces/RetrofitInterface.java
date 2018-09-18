@@ -12,10 +12,10 @@ import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
-public interface RetrofitService {
+public interface RetrofitInterface {
     @Headers({"Accept: application/json"})
     @GET("bdms/noticeBoard/searchNoticePost")
-    Call<JsonObject> searchNotice(
+    Call<JsonObject> getNotices(
             @Query("access_token") String access_token
             , @Query("pageSize") int pageSize
             , @Query("pageNum") int pageNum
@@ -35,7 +35,7 @@ public interface RetrofitService {
             , @Body PostReqBody postReqBody);
 
     @POST("bdms/noticeBoard/patchNoticePost")
-    Call<NoticeRepo> patchNotice(
+    Call<NoticeRepo> updateNotice(
             @Query("access_token") String access_token
             , @Body PostReqBody postReqBody);
 

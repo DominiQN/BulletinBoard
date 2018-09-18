@@ -8,16 +8,19 @@ import org.json.JSONObject;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 
-public class NoticeJSONWrapper {
+public class NoticeListJSONWrapper {
 
-    private static final String TAG = "NoticeJSONWrapper";
+    private static final String TAG = "NoticeListJSONWrapper";
 
     protected JSONObject mJSONObject;
+    protected List<Notice> mNotices;
 
     private final String NOTICE_ID = "noticeNum";
     private final String TITLE = "noticeTitle";
@@ -34,11 +37,16 @@ public class NoticeJSONWrapper {
     private final String MINUTE = "minute";
 
 
-    public NoticeJSONWrapper(JSONObject jsonObject) {
+    public NoticeListJSONWrapper(JSONObject jsonObject) {
         mJSONObject = jsonObject;
     }
 
-    public Notice getNotice() {
+    public List<Notice> getNotices() {
+        mNotices = new ArrayList<Notice>();
+
+    }
+
+    public Notice getNotice(JSONObject jsonObject) {
         Notice notice = new Notice();
 
         int noticeId = 0;
@@ -51,40 +59,40 @@ public class NoticeJSONWrapper {
         boolean highlighted = false;
 
         try {
-            noticeId = mJSONObject.getInt(NOTICE_ID);
+            noticeId = jsonObject.getInt(NOTICE_ID);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from NOTICE_ID :\n" + getExceptionToString(e)); }
         try {
-            title = mJSONObject.getString(TITLE);
+            title = jsonObject.getString(TITLE);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from TITLE :\n" + getExceptionToString(e)); }
         try {
-            content = mJSONObject.getString(CONTENT);
+            content = jsonObject.getString(CONTENT);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from CONTENT :\n" + getExceptionToString(e)); }
         try {
             firstDate = getDate(
-                    mJSONObject.getJSONObject(FIRST_DATE));
+                    jsonObject.getJSONObject(FIRST_DATE));
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from FIRST_DATE :\n" + getExceptionToString(e)); }
         try {
             modifiedDate = getDate(
-                    mJSONObject.getJSONObject(MODIFIED_DATE));
+                    jsonObject.getJSONObject(MODIFIED_DATE));
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from MODIFIED_DATE :\n" + getExceptionToString(e));
         }
         try {
-            views = mJSONObject.getInt(VIEWS);
+            views = jsonObject.getInt(VIEWS);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from VIEWS :\n" + getExceptionToString(e));
         }
         try {
-            writer = mJSONObject.getString(WRITER);
+            writer = jsonObject.getString(WRITER);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from WRITER :\n" + getExceptionToString(e));
         }
         try {
-            highlighted = mJSONObject.getBoolean(HIGHLIGHTED);
+            highlighted = jsonObject.getBoolean(HIGHLIGHTED);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from HIGHLIGHTED :\n" + getExceptionToString(e));
         }
