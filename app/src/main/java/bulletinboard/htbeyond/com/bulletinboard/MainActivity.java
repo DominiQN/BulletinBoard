@@ -16,7 +16,6 @@ import java.util.Random;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorageTester;
-import bulletinboard.htbeyond.com.bulletinboard.models.PostReqBody;
 import bulletinboard.htbeyond.com.bulletinboard.network.APIClient;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
 import retrofit2.Call;

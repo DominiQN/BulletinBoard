@@ -2,6 +2,7 @@ package bulletinboard.htbeyond.com.bulletinboard.network;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -21,8 +22,6 @@ public class NoticeListJSONWrapper {
 
     protected JSONObject mJSONObject;
     protected List<Notice> mNotices;
-    protected boolean mFirst;
-    protected boolean mLast;
 
     private final String PAGE = "content";
     private final String TOTAL_ELEMENTS = "totalElements";
@@ -52,13 +51,25 @@ public class NoticeListJSONWrapper {
         mJSONObject = jsonObject;
     }
 
-    public List<Notice> getNotices() {
-        if (mNotices != null) {
-            return mNotices;
-        }
-        mNotices = new ArrayList<Notice>();
-        mJSONObject.getJSONArray(PAGE);
 
+    public boolean isFirst() {
+        boolean first = false;
+        try {
+            first = mJSONObject.getBoolean(FIRST);
+        } catch (JSONException e) {
+            Log.w(TAG, "catched JSONException from FIRST :\n" + getExceptionToString(e));
+        }
+        return first;
+    }
+
+    public boolean isLast() {
+        boolean last = false;
+        try {
+            last = mJSONObject.getBoolean(LAST);
+        } catch (JSONException e) {
+            Log.w(TAG, "catched JSONException from LAST :\n" + getExceptionToString(e));
+        }
+        return last;
     }
 
     public Notice getNotice(JSONObject jsonObject) {
@@ -124,6 +135,55 @@ public class NoticeListJSONWrapper {
         return notice;
     }
 
+    public List<Notice> getNotices() {
+        if (mNotices != null) {
+            return mNotices;
+        }
+        mNotices = new ArrayList<>();
+        JSONArray page = null;
+        try {
+            page = mJSONObject.getJSONArray(PAGE);
+        } catch (JSONException e) {
+            Log.w(TAG, "catched JSONException from PAGE :\n" + getExceptionToString(e));
+        }
+
+
+        int length = page.length();
+        if (length != 0) {
+            for (int i = 0; i < length; i++) {
+                JSONObject jsonNotice = null;
+                try {
+                    jsonNotice = page.getJSONObject(i);
+                } catch (JSONException e) {
+                    Log.w(TAG, "catched JSONException from 'Notice' JSON file :\n" + getExceptionToString(e));
+                }
+                mNotices.add(getNotice(jsonNotice));
+            }
+        }
+
+        return mNotices;
+    }
+
+    public int getPageNumber() {
+        int number = 0;
+        try {
+            number = mJSONObject.getInt(PAGE_NUMBER);
+        } catch (JSONException e) {
+            Log.w(TAG, "catched JSONException from PAGE_NUMBER :\n" + getExceptionToString(e));
+        }
+        return number;
+    }
+
+    public int getTotalNumberOfPages() {
+        int num = 0;
+        try {
+            num = mJSONObject.getInt(TOTAL_PAGES);
+        } catch (JSONException e) {
+            Log.w(TAG, "catched JSONException from TOTAL_PAGES :\n" + getExceptionToString(e));
+        }
+        return num;
+    }
+
     private Date getDate(JSONObject localDateTime) throws JSONException {
         int year = localDateTime.getInt(YEAR);
         int month = localDateTime.getInt(MONTH);
@@ -131,10 +191,8 @@ public class NoticeListJSONWrapper {
         int hour = localDateTime.getInt(HOUR);
         int minute = localDateTime.getInt(MINUTE);
 
-        Date date = new GregorianCalendar(year, month, dayOfMonth, hour, minute)
+        return new GregorianCalendar(year, month, dayOfMonth, hour, minute)
                 .getTime();
-
-        return date;
     }
 
     private String getExceptionToString(JSONException e) {

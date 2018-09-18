@@ -8,6 +8,9 @@ import java.util.Locale;
 
 public class Notice {
 
+    public static final int POST = 0;
+    public static final int UPDATE = 1;
+
     private int mNoticeId;
     private String mTitle;
     private String mContent;
@@ -17,10 +20,28 @@ public class Notice {
     private String mWriter;
     private boolean mHighlighted;
 
+    // Post request에 보낼 Notice의 Body
+    public class PostBody {
 
-    public Notice() {
+        private Integer noticeNum;
+        private String noticeTitle;
+        private String noticeContent;
+        private String noticeMemId;
+        private boolean highlight;
 
+
+        public PostBody(String title, String content, String writer, boolean highlighted) {
+            this.noticeTitle = noticeTitle;
+            this.noticeContent = noticeContent;
+            this.highlight = highlight;
+        }
+
+        public PostBody(int noticeId, String title, String content, String writer, boolean highlighted) {
+            this(title, content, writer, highlighted);
+            this.noticeNum = noticeId;
+        }
     }
+
 
     @Override
     public boolean equals(Object obj) {
@@ -74,6 +95,18 @@ public class Notice {
     public String getWriter() {
         return mWriter;
     }
+
+    public PostBody getPostBody(int mode) {
+        switch (mode) {
+            case POST:
+                return new PostBody(mTitle, mContent, mWriter, mHighlighted);
+            case UPDATE:
+                return new PostBody(mNoticeId, mTitle, mContent, mWriter, mHighlighted);
+            default:
+                return null;
+        }
+    }
+
 
     public Notice setNoticeId(int noticeId) {
         mNoticeId = noticeId;

@@ -2,7 +2,7 @@ package bulletinboard.htbeyond.com.bulletinboard.interfaces;
 
 import com.google.gson.JsonObject;
 
-import bulletinboard.htbeyond.com.bulletinboard.models.PostReqBody;
+import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeRepo;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,12 +32,12 @@ public interface RetrofitInterface {
     @POST("bdms/noticeBoard/postNoticePost")
     Call<NoticeRepo> postNotice(
             @Query("access_token") String access_token
-            , @Body PostReqBody postReqBody);
+            , @Body Notice.PostBody postReqBody);
 
     @POST("bdms/noticeBoard/patchNoticePost")
     Call<NoticeRepo> updateNotice(
             @Query("access_token") String access_token
-            , @Body PostReqBody postReqBody);
+            , @Body Notice.PostBody postReqBody);
 
     @DELETE("bdms/noticeBoard/deleteNoticePost")
     Call<NoticeRepo> deleteNotice(

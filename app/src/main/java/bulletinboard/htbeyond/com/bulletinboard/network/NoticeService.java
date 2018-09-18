@@ -8,7 +8,7 @@ import android.widget.Toast;
 import com.google.gson.JsonObject;
 
 import bulletinboard.htbeyond.com.bulletinboard.R;
-import bulletinboard.htbeyond.com.bulletinboard.models.PostReqBody;
+import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,7 +32,8 @@ public class NoticeService {
 
     public void deleteNotice() {
 
-        final Call<NoticeRepo> res = APIClient.getInstance(mContext).getService().deleteNotice("access_token", 250);
+        final Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+                .deleteNotice("access_token", 250);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -55,7 +56,8 @@ public class NoticeService {
 
     public void getNotice() {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService().getNotice("access_token", 250);
+        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+                .getNotice("access_token", 250);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -76,9 +78,10 @@ public class NoticeService {
         });
     }
 
-    public void postNotice() {
+    public void postNotice(Notice notice) {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService().postNotice("access_token",new PostReqBody("0916title", "0916content"));
+        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+                .postNotice("access_token", notice.getPostBody(Notice.POST));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
@@ -101,7 +104,8 @@ public class NoticeService {
 
     public void getNotices(int pageSize, int pageNum) {
 
-        Call<JsonObject> res = APIClient.getInstance(mContext).getService().getNotices(mContext.getString(R.string.access_token) , pageSize, pageNum, MODE_FIND_ALL);
+        Call<JsonObject> res = APIClient.getInstance(mContext).getService()
+                .getNotices(mContext.getString(R.string.access_token) , pageSize, pageNum, MODE_FIND_ALL);
         res.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -118,9 +122,10 @@ public class NoticeService {
         });
     }
 
-    public void updateNotice(View view) {
+    public void updateNotice(Notice notice) {
 
-        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService().updateNotice("access_token", new PostReqBody(250, "0916patchTItle", "0916patchContent"));
+        Call<NoticeRepo> res = APIClient.getInstance(mContext).getService()
+                .updateNotice("access_token", notice.getPostBody(Notice.UPDATE));
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
