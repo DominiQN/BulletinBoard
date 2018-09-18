@@ -37,7 +37,7 @@ public class NoticeListFragment extends Fragment {
             = "bulletinboard.htbeyond.com.bulletinboard.fragments.last";
 
     private RecyclerView mRecyclerView;
-    private LinearLayoutManager mLinearLayoutManager;\
+    private LinearLayoutManager mLinearLayoutManager;
     private EndlessRecyclerOnScrollListener mEndlessRecyclerOnScrollListener;
     private EndlessNoticeAdapter mAdapter;
     private int mCurrentPageNumber;
@@ -111,7 +111,6 @@ public class NoticeListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        updateUI();
     }
 
     @Override
@@ -119,51 +118,5 @@ public class NoticeListFragment extends Fragment {
         super.onStart();
         mIsLast = false;
         mCurrentPageNumber = 0;
-    }
-
-    private void updateUI() {
-        List<Notice> notices = NoticeStorage.getInstance(getActivity()).getNotices();
-
-        if (mAdapter == null) {
-            mAdapter = new NoticeAdapter(notices);
-            mRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.setNotices(notices);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void getNotices(int pageSize, int pageNum) {
-
-        Call<JSONObject> res = RetrofitService.getInstance(getActivity()).getService()
-                .getNotices(getString(R.string.access_token) , pageSize, pageNum, NoticeService.MODE_FIND_ALL);
-        res.enqueue(new Callback<JSONObject>() {
-            @Override
-            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
-                Log.d(TAG, "getNotices() called" + response.toString());
-                if (response.isSuccessful()) {
-                    NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
-                    NoticeStorage storage = NoticeStorage.getInstance(getActivity());
-                    if (isRefresh) {
-                        storage.setNotices(jsonWrapper.getNotices());
-                    } else {
-                        if (jsonWrapper.isLast()) {
-                            mIsLast = true;
-                            return;
-                        }
-                        mCurrentPageNumber++;
-                        mA
-                        storage.appendNotices(jsonWrapper.getNotices());
-                    }
-//
-//                    updateUI();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JSONObject> call, Throwable t) {
-                Log.e(TAG, "getNotices() called" + t.getMessage());
-            }
-        });
     }
 }
