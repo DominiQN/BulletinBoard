@@ -120,6 +120,7 @@ public abstract class NoticeService {
             public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
                 Log.d(TAG, "getNotices() called" + response.toString());
                 if (response.isSuccessful()) {
+                    Toast.makeText(mContext, response.body().toString(), Toast.LENGTH_LONG);
                     NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
                     NoticeStorage storage = NoticeStorage.getInstance(mContext);
                     storage.appendNotices(jsonWrapper.getNotices());

@@ -19,6 +19,8 @@
         <activity
             android:name=".NoticeEditActivity"
             android:parentActivityName=".ListActivity" />
+        <activity android:name=".NoticeActivity"
+            android:parentActivityName=".ListActivity"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

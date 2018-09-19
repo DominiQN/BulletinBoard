@@ -1,5 +1,6 @@
 package bulletinboard.htbeyond.com.bulletinboard.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 
 import org.json.JSONObject;
 
+import bulletinboard.htbeyond.com.bulletinboard.NoticeEditActivity;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeListJSONWrapper;
@@ -113,6 +115,8 @@ public class NoticeListFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_notice_list_item_post:
+                Intent i = NoticeEditActivity.newIntent(getActivity(), NoticeEditActivity.CREATE_NOTICE);
+                startActivity(i);
 
                 return true;
             default:

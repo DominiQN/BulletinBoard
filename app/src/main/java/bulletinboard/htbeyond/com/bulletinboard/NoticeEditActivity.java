@@ -90,12 +90,16 @@ public class NoticeEditActivity extends AppCompatActivity {
             mHighlightedCheckBox.setChecked(
                     savedInstanceState.getBoolean(KEY_HIGHLIGHT, mNotice.isHighlighted()));
         }
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_notice_edit, menu);
+        MenuItem item = (MenuItem) menu.findItem(R.id.menu_notice_edit_item_delete);
+        item.setVisible(!mCreating);
         return true;
     }
 
@@ -104,7 +108,7 @@ public class NoticeEditActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_notice_edit_item_edit:
                 sendNotice();
-
+                finish();
                 return true;
             case R.id.menu_notice_edit_item_delete:
                 deleteNotice();
@@ -131,14 +135,15 @@ public class NoticeEditActivity extends AppCompatActivity {
 
         mNotice.setTitle(mTitleTextView.getText().toString())
                 .setContent(mContentTextView.getText().toString())
-                .setHighlighted(mHighlightedCheckBox.isChecked());
+                .setHighlighted(mHighlightedCheckBox.isChecked())
+                .setWriter("tester");
 
         if (mCreating) {
             res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
-                    .postNotice("access_token", mNotice.getPostBody(Notice.POST));
+                    .postNotice(getString(R.string.access_token), mNotice.getPostBody(Notice.POST));
         } else {
             res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
-                    .postNotice("access_token", mNotice.getPostBody(Notice.UPDATE));
+                    .postNotice(getString(R.string.access_token), mNotice.getPostBody(Notice.UPDATE));
         }
             res.enqueue(new Callback<NoticeRepo>() {
                 @Override
@@ -165,7 +170,7 @@ public class NoticeEditActivity extends AppCompatActivity {
         mNotice.setNoticeId(getIntent().getIntExtra(EXTRA_NOTICE_NUM, CREATE_NOTICE));
 
         Call<NoticeRepo> res = RetrofitService.getInstance(NoticeEditActivity.this).getService()
-                .deleteNotice("access_token", mNotice.getNoticeId());
+                .deleteNotice(getString(R.string.access_token), mNotice.getNoticeId());
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {

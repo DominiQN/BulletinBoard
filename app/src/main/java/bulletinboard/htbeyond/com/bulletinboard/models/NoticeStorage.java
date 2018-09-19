@@ -2,6 +2,7 @@ package bulletinboard.htbeyond.com.bulletinboard.models;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoticeStorage {
@@ -21,6 +22,7 @@ public class NoticeStorage {
 
     private NoticeStorage(Context context) {
         mContext = context.getApplicationContext();
+        mNotices = new ArrayList<>();
     }
 
     // 서버에 Notice 추가

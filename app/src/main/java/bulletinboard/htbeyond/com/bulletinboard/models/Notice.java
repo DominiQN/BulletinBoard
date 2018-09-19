@@ -30,10 +30,11 @@ public class Notice {
         private boolean highlight;
 
 
-        public PostBody(String title, String content, String writer, boolean highlighted) {
+        public PostBody(String noticeTitle, String noticeContent, String writer, boolean highlighted) {
             this.noticeTitle = noticeTitle;
             this.noticeContent = noticeContent;
-            this.highlight = highlight;
+            this.noticeMemId = writer;
+            this.highlight = highlighted;
         }
 
         public PostBody(int noticeId, String title, String content, String writer, boolean highlighted) {
