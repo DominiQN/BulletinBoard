@@ -14,17 +14,24 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import bulletinboard.htbeyond.com.bulletinboard.NoticeEditActivity;
 import bulletinboard.htbeyond.com.bulletinboard.R;
+import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 import bulletinboard.htbeyond.com.bulletinboard.models.NoticeStorage;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeListJSONWrapper;
 import bulletinboard.htbeyond.com.bulletinboard.network.NoticeService;
 import bulletinboard.htbeyond.com.bulletinboard.network.RetrofitService;
 import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.EndlessRecyclerViewScrollListener;
 import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.NoticeAdapter;
+import bulletinboard.htbeyond.com.bulletinboard.recyclerviewhelpers.PaginationScrollListener;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,12 +43,17 @@ public class NoticeListFragment extends Fragment {
             = "bulletinboard.htbeyond.com.bulletinboard.fragments.page_num";
     private static final String KEY_LAST
             = "bulletinboard.htbeyond.com.bulletinboard.fragments.last";
+    private static final int PAGE_START = 0;
 
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLinearLayoutManager;
     private NoticeAdapter mAdapter;
-    private int mCurrentPageNumber;
-    private boolean mIsLast;
+    private ProgressBar mProgressBar;
+    private int mCurrentPageNumber = PAGE_START;
+    private int mTotalPage;
+    private boolean mIsLoading = false;
+    private boolean mIsLastPage;
+    private List<Notice> mNotices;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +65,7 @@ public class NoticeListFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(KEY_PAGE_NUM, mCurrentPageNumber);
-        outState.putBoolean(KEY_LAST, mIsLast);
+        outState.putBoolean(KEY_LAST, mIsLastPage);
     }
 
     @Nullable
@@ -61,34 +73,42 @@ public class NoticeListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notice_list, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.list_recycler_view);
-
+        mProgressBar = (ProgressBar) view.findViewById(R.id.list_item_progress_bar);
         mAdapter = new NoticeAdapter(NoticeStorage.getInstance(getActivity()).getNotices());
-        mRecyclerView.setAdapter(mAdapter);
+        mLinearLayoutManager = new LinearLayoutManager(
+                getActivity(), LinearLayoutManager.VERTICAL, false);
 
-        mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLinearLayoutManager);
-
-        mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(mLinearLayoutManager) {
+        mRecyclerView.setAdapter(mAdapter);
+        loadFirstPage();
+        mRecyclerView.addOnScrollListener(new PaginationScrollListener(mLinearLayoutManager) {
             @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                final int currentCount = mAdapter.getItemCount();
-                NoticeService noticeService = new NoticeService(getActivity()) {
-                    @Override
-                    public void onDo() {
-                        // onRespose 시 작성해야 할 것
+            protected void loadMoreItems() {
+                mIsLoading = true;
+                loadNextPage();
+                mCurrentPageNumber++;
+            }
 
-                        mAdapter.notifyItemRangeInserted(currentCount, mAdapter.getItemCount() - 1);
-                    }
-                };
-                noticeService.getNotices(NoticeService.NORMAL_SIZE, page);
+            @Override
+            public int getTotalPageCount() {
+                // TODO 토털 페이지 개수
+                return 0;
+            }
+
+            @Override
+            public boolean isLastPage() {
+                return mIsLastPage;
+            }
+
+            @Override
+            public boolean isLoading() {
+                return mIsLoading;
             }
         });
 
         if (savedInstanceState != null) {
-            mIsLast = savedInstanceState.getBoolean(KEY_LAST);
+            mIsLastPage = savedInstanceState.getBoolean(KEY_LAST);
         }
-
-        mCurrentPageNumber = 0;
 
         return view;
     }
@@ -101,7 +121,7 @@ public class NoticeListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        mIsLast = false;
+        mIsLastPage = false;
         mCurrentPageNumber = 0;
     }
 
@@ -123,4 +143,75 @@ public class NoticeListFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void loadFirstPage() {
+
+        Call<JSONObject> res = RetrofitService.getInstance(getActivity()).getService()
+                .getNotices(getActivity().getString(R.string.access_token) , NoticeService.NORMAL_SIZE, mCurrentPageNumber, NoticeService.MODE_FIND_ALL);
+
+        res.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                Log.d(TAG, "getNotices() called" + response.toString());
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), response.body().toString(), Toast.LENGTH_LONG);
+                    NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
+
+                    mAdapter.setNotices(jsonWrapper.getNotices());
+                    mIsLoading = false;
+                    mTotalPage = jsonWrapper.getTotalNumberOfPages();
+
+                    if (jsonWrapper.isLast()) {
+                        mAdapter.addLoadingFooter();
+                    } else {
+                        mIsLastPage = true;
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e(TAG, "getNotices() called" + t.getMessage());
+                Toast.makeText(getActivity(), R.string.toast_failure, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    private void loadNextPage() {
+
+        Call<JSONObject> res = RetrofitService.getInstance(getActivity()).getService()
+                .getNotices(getActivity().getString(R.string.access_token) , NoticeService.NORMAL_SIZE, mCurrentPageNumber, NoticeService.MODE_FIND_ALL);
+
+        res.enqueue(new Callback<JSONObject>() {
+            @Override
+            public void onResponse(Call<JSONObject> call, Response<JSONObject> response) {
+                Log.d(TAG, "getNotices() called" + response.toString());
+                if (response.isSuccessful()) {
+                    Toast.makeText(getActivity(), response.body().toString(), Toast.LENGTH_LONG);
+                    NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
+
+                    mProgressBar.setVisibility(View.GONE);
+                    mAdapter.removeLoadingFooter();
+                    mIsLoading = false;
+                    mAdapter.addAll(jsonWrapper.getNotices());
+
+                    if (jsonWrapper.isLast()) {
+                        mAdapter.addLoadingFooter();
+                    } else {
+                        mIsLastPage = true;
+                    }
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JSONObject> call, Throwable t) {
+                Log.e(TAG, "getNotices() called" + t.getMessage());
+                Toast.makeText(getActivity(), R.string.toast_failure, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }

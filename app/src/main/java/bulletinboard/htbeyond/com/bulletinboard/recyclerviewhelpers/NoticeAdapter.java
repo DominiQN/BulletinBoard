@@ -15,11 +15,15 @@ import bulletinboard.htbeyond.com.bulletinboard.NoticeActivity;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 
-public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder> {
+public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int VIEW_TYPE_NOTICE = 0;
+    private static final int VIEW_TYPE_LOADING = 111;
 
     private List<Notice> mNotices;
+    private boolean mIsLoadingAdded = false;
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    protected class NoticeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public Notice mNotice;
         public TextView mTitle;
@@ -28,7 +32,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
         public TextView mViews;
 
 
-        public ViewHolder(@NonNull View itemView) {
+        public NoticeHolder(@NonNull View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(this);
@@ -45,43 +49,121 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder
         }
     }
 
+    protected class ProgressHolder extends RecyclerView.ViewHolder {
+
+        public ProgressHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
 
     public NoticeAdapter(List<Notice> notices) {
         mNotices = notices;
     }
 
+
+    public void add(Notice notice) {
+        mNotices.add(notice);
+        notifyItemInserted(mNotices.size() - 1);
+    }
+
+    public void addAll(List<Notice> noticeList) {
+        mNotices.addAll(noticeList);
+    }
+
+    public void clear() {
+        mIsLoadingAdded = false;
+        mNotices.clear();
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public Notice getItem(int position) {
+        if (mNotices == null) {
+            return null;
+        }
+        return mNotices.get(position);
+    }
+
+    public void addLoadingFooter() {
+        mIsLoadingAdded = true;
+        add(new Notice());
+    }
+
+    public void removeLoadingFooter() {
+        mIsLoadingAdded = false;
+
+        int position = mNotices.size() - 1;
+        Notice item = mNotices.get(position);
+
+        if (item != null) {
+            mNotices.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    private NoticeHolder getViewHolder(ViewGroup viewGroup, LayoutInflater inflater) {
+        NoticeHolder noticeHolder;
+        View v = inflater.inflate(R.layout.list_item_notice, viewGroup, false);
+        return new NoticeHolder(v);
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.list_item_notice, viewGroup, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
-        return new ViewHolder(view);
+        switch (i) {
+            case VIEW_TYPE_NOTICE:
+                viewHolder = getViewHolder(viewGroup, inflater);
+                break;
+            case VIEW_TYPE_LOADING:
+                View v = inflater.inflate(R.layout.list_item_progress_bar, viewGroup,false);
+                viewHolder = new ProgressHolder(v);
+                break;
+        }
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         Notice notice = mNotices.get(i);
 
-        viewHolder.mNotice = notice;
-        viewHolder.mTitle.setText(notice.getTitle());
-        viewHolder.mWriter.setText(notice.getWriter());
-        viewHolder.mDate.setText(notice.getModifiedDateToString());
-        viewHolder.mViews.setText("views" + notice.getNoticeId());
-        if (notice.isHighlighted()) {
-            viewHolder.mTitle.setTypeface(null, Typeface.BOLD);
+        switch (getItemViewType(i)) {
+            case VIEW_TYPE_NOTICE:
+                NoticeHolder holder = (NoticeHolder) viewHolder;
+                holder.mNotice = notice;
+                holder.mTitle.setText(notice.getTitle());
+                holder.mWriter.setText(notice.getWriter());
+                holder.mDate.setText(notice.getModifiedDateToString());
+                holder.mViews.setText("views" + notice.getNoticeId());
+                if (notice.isHighlighted()) {
+                    holder.mTitle.setTypeface(null, Typeface.BOLD);
+                }
+                break;
+
+            case VIEW_TYPE_LOADING:
+                break;
         }
 
     }
 
     @Override
     public int getItemCount() {
-        return mNotices.size();
+        return mNotices == null ? 0 : mNotices.size();
     }
 
     public void setNotices(List<Notice> notices) {
         mNotices = notices;
     }
 
-
+    @Override
+    public int getItemViewType(int position) {
+        return (position == mNotices.size() - 1 && mIsLoadingAdded) ?
+                VIEW_TYPE_LOADING : VIEW_TYPE_NOTICE;
+    }
 }

@@ -141,14 +141,14 @@ public class NoticeListJSONWrapper {
         }
         mNotices = new ArrayList<>();
         JSONArray page = null;
+        int length = 0;
         try {
             page = mJSONObject.getJSONArray(PAGE);
         } catch (JSONException e) {
             Log.w(TAG, "catched JSONException from PAGE :\n" + getExceptionToString(e));
         }
 
-
-        int length = page.length();
+        length = page.length();
         if (length != 0) {
             for (int i = 0; i < length; i++) {
                 JSONObject jsonNotice = null;
