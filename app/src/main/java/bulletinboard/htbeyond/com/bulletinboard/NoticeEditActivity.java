@@ -191,11 +191,7 @@ public class NoticeEditActivity extends AppCompatActivity {
         });
 
     }
-        /*
-         * TODO: 작성된 Notice를 서버에 보내 저장한 후, 서버에 정상 저장 되면 다시 불러오기, 저장되지 않았을 시 오류 메시지 만들기
-         *
-         *
-         */
+
         private void showFailToast() {
             Toast.makeText(NoticeEditActivity.this, R.string.toast_failure, Toast.LENGTH_SHORT).show();
         }
