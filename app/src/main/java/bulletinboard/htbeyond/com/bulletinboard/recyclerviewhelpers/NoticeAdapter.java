@@ -15,11 +15,11 @@ import bulletinboard.htbeyond.com.bulletinboard.NoticeActivity;
 import bulletinboard.htbeyond.com.bulletinboard.R;
 import bulletinboard.htbeyond.com.bulletinboard.models.Notice;
 
-public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeHolder> {
+public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.ViewHolder> {
 
     private List<Notice> mNotices;
 
-    public class NoticeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         public Notice mNotice;
         public TextView mTitle;
@@ -28,7 +28,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeHold
         public TextView mViews;
 
 
-        public NoticeHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             itemView.setOnClickListener(this);
@@ -52,24 +52,24 @@ public class NoticeAdapter extends RecyclerView.Adapter<NoticeAdapter.NoticeHold
 
     @NonNull
     @Override
-    public NoticeHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.list_item_notice, viewGroup, false);
 
-        return new NoticeHolder(view);
+        return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NoticeHolder noticeHolder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Notice notice = mNotices.get(i);
 
-        noticeHolder.mNotice = notice;
-        noticeHolder.mTitle.setText(notice.getTitle());
-        noticeHolder.mWriter.setText(notice.getWriter());
-        noticeHolder.mDate.setText(notice.getModifiedDateToString());
-        noticeHolder.mViews.setText("views" + notice.getNoticeId());
+        viewHolder.mNotice = notice;
+        viewHolder.mTitle.setText(notice.getTitle());
+        viewHolder.mWriter.setText(notice.getWriter());
+        viewHolder.mDate.setText(notice.getModifiedDateToString());
+        viewHolder.mViews.setText("views" + notice.getNoticeId());
         if (notice.isHighlighted()) {
-            noticeHolder.mTitle.setTypeface(null, Typeface.BOLD);
+            viewHolder.mTitle.setTypeface(null, Typeface.BOLD);
         }
 
     }

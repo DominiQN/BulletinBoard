@@ -1,6 +1,7 @@
 package bulletinboard.htbeyond.com.bulletinboard.network;
 
 import android.content.Context;
+import android.content.ServiceConnection;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,15 +16,16 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class NoticeService {
+public abstract class NoticeService {
 
     private static final String TAG = "NoticeService";
-    public static final int NORMAL_SIZE = 10;
+    public static final int NORMAL_SIZE = 30;
     public static final int MODE_FIND_ALL = 0;
     public static final int MODE_FIND_BY_TITLE = 1;
     public static final int MODE_FIND_BY_CONTENT = 2;
     public static final int MODE_FIND_BY_WRITER = 3;
     public static final int MODE_FIND_BY_HIGHLIGHT = 4;
+
 
     private Context mContext;
 
@@ -43,6 +45,8 @@ public class NoticeService {
                 if (response.isSuccessful()) {
                     Toast.makeText(mContext, R.string.toast_delete_success, Toast.LENGTH_SHORT).show();
 
+                    onDo();
+
                 } else {
                     showFailToast();
                 }
@@ -56,16 +60,17 @@ public class NoticeService {
         });
     }
 
-    public void getNotice() {
+    public void getNotice(int noticeId) {
 
         Call<NoticeRepo> res = RetrofitService.getInstance(mContext).getService()
-                .getNotice("access_token", 250);
+                .getNotice("access_token", noticeId);
         res.enqueue(new Callback<NoticeRepo>() {
             @Override
             public void onResponse(Call<NoticeRepo> call, Response<NoticeRepo> response) {
                 Log.d(TAG, "getNoticePage() called" + response.toString());
                 if (response.isSuccessful()) {
 
+                    onDo();
 
                 } else {
                     showFailToast();
@@ -91,6 +96,7 @@ public class NoticeService {
                 Log.d(TAG, "postNotice() called" + response.toString());
                 if (response.isSuccessful()) {
                     Toast.makeText(mContext, R.string.toast_post_success, Toast.LENGTH_SHORT).show();
+                    onDo();
 
                 } else {
                     showFailToast();
@@ -105,7 +111,7 @@ public class NoticeService {
         });
     }
 
-    public void getNotices(int pageSize, int pageNum, final boolean isRefresh) {
+    public void getNotices(int pageSize, int pageNum) {
 
         Call<JSONObject> res = RetrofitService.getInstance(mContext).getService()
                 .getNotices(mContext.getString(R.string.access_token) , pageSize, pageNum, MODE_FIND_ALL);
@@ -116,11 +122,9 @@ public class NoticeService {
                 if (response.isSuccessful()) {
                     NoticeListJSONWrapper jsonWrapper = new NoticeListJSONWrapper(response.body());
                     NoticeStorage storage = NoticeStorage.getInstance(mContext);
-                    if (isRefresh) {
-                        storage.setNotices(jsonWrapper.getNotices());
-                    } else {
-                        storage.appendNotices(jsonWrapper.getNotices());
-                    }
+                    storage.appendNotices(jsonWrapper.getNotices());
+                    storage.setLast(jsonWrapper.isLast());
+                    onDo();
                 }
             }
 
@@ -141,5 +145,6 @@ public class NoticeService {
         Toast.makeText(mContext, R.string.toast_failure, Toast.LENGTH_SHORT).show();
     }
 
+    public abstract void onDo();
 
 }
